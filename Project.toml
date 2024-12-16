@@ -3,7 +3,13 @@ uuid = "5124a3bb-fc65-490b-b96a-7f01b8eecbce"
 authors = ["John Unwin <john@fingertip.co.nz> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+Oxygen = "df9a0d86-3283-4920-82dc-4555fc0d1d8b"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+
 [compat]
+Revise = "3.6.4"
 julia = "1.6.7"
 
 [extras]
