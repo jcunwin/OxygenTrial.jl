@@ -3,6 +3,8 @@ module OxygenTrial
 using Oxygen ; @oxidise
 #using HTTP
 
+include("HealthCheck.jl")
+
 # Write your package code here.
 get("/") do req::Request
     return "Nothing to see here!"

@@ -1,30 +1,43 @@
-#Base image
-FROM julia:1.11.2
+FROM julia:1.11.2-bookworm
+# FROM julia:1.11.2-bullseye
 
-#Set the working directory
-WORKDIR /home
+# Add metadata
+LABEL maintainer="john@fingertip.co.nz"
+LABEL version="1.0"
+LABEL description="Julia web application using Oxygen.jl"
 
-#Copy the Project.toml and Manifest.toml files into the image to manage dependencies
-COPY Project-container.toml ./Project.toml
-COPY Manifest.toml ./
+# Create non-root user
+RUN useradd -m -s /bin/bash julia-user
+USER julia-user
+WORKDIR /home/julia-user
 
-#Enable multithreading for Julia
-ENV JULIA_NUM_THREADS=4
+# Set environment variables
+ENV JULIA_NUM_THREADS=4 \
+    JULIA_DEPOT_PATH=/home/julia-user/.julia
 
-#Install the dependencies in a separate layer to improve caching
+# Copy dependency files
+COPY --chown=julia-user:julia-user Project-container.toml ./Project.toml
+COPY --chown=julia-user:julia-user Manifest.toml ./
+
+# Install dependencies only
 RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
-#Copy the source code into the image
-COPY src/ ./src
-COPY test/ ./test
-COPY web-server.jl/ ./
+# Copy application code
+COPY --chown=julia-user:julia-user src/ ./src
+COPY --chown=julia-user:julia-user test/ ./test
+COPY --chown=julia-user:julia-user web-server.jl ./
 
-RUN julia --project -e 'using Pkg; Pkg.precompile()'
+# Now precompile and test with full application code
+RUN julia --project -e 'using Pkg; Pkg.precompile()' && \
+    julia --project -e 'using Pkg; Pkg.test()'
 
-RUN julia --project -e 'using Pkg; Pkg.test()'
+USER root
+RUN apt-get update && apt-get install -y curl
+USER julia-user
 
-#Expose the desired port
+HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8080/health | grep -q '"status":"healthy"' || exit 1
+
 EXPOSE 8080
 
-#Set the entrypoint to start the application
 ENTRYPOINT ["julia", "--project=.", "web-server.jl"]
