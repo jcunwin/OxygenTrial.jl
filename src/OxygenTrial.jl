@@ -1,7 +1,6 @@
 module OxygenTrial
 
 using Oxygen ; @oxidise
-#using HTTP
 
 include("HealthCheck.jl")
 
@@ -27,7 +26,7 @@ get("/addparms") do req::Request, x::Int, y::Int
 end
 
 function add(a, b)
-    return a + b + 12
+    return a + b
 end
 
 end

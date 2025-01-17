@@ -16,20 +16,25 @@ ENV JULIA_NUM_THREADS=4 \
     JULIA_DEPOT_PATH=/home/julia-user/.julia
 
 # Copy dependency files
-COPY --chown=julia-user:julia-user Project-container.toml ./Project.toml
+#COPY --chown=julia-user:julia-user Project-container.toml ./Project.toml
+COPY --chown=julia-user:julia-user Project.toml ./
 COPY --chown=julia-user:julia-user Manifest.toml ./
-
-# Install dependencies only
-RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
 # Copy application code
 COPY --chown=julia-user:julia-user src/ ./src
 COPY --chown=julia-user:julia-user test/ ./test
 COPY --chown=julia-user:julia-user web-server.jl ./
 
+# Install dependencies only
+#RUN julia --project -e 'using Pkg; Pkg.instantiate()'
+
 # Now precompile and test with full application code
-RUN julia --project -e 'using Pkg; Pkg.precompile()' && \
-    julia --project -e 'using Pkg; Pkg.test()'
+#RUN julia --project -e 'using Pkg; Pkg.Registry.update(); Pkg.resolve(); Pkg.test()'
+RUN julia --project -e 'using Pkg; Pkg.precompile(); Pkg.test()'
+#RUN julia --project -e 'using Pkg; Pkg.resolve(); Pkg.precompile(); Pkg.test()'
+# && \
+#    julia --project -e 'using Pkg; Pkg.precompile()' && \
+#    julia --project -e 'using Pkg; Pkg.test()'
 
 USER root
 RUN apt-get update && apt-get install -y curl
