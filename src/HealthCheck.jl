@@ -3,8 +3,6 @@ A health check for the application.
 It can be used by Docker to monitor the state of the application.
 It can be used to verify that the application is up and running.
 """
-using Oxygen
-using Dates
 
 # Structure to track application state
 mutable struct AppHealth
