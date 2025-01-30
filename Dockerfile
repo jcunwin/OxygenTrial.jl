@@ -27,6 +27,9 @@ COPY --chown=julia-user:julia-user src/ ./src
 COPY --chown=julia-user:julia-user test/ ./test
 COPY --chown=julia-user:julia-user web-server.jl ./
 
+# Copy assets
+COPY --chown=julia-user:julia-user assets/ ./assets
+
 # Install and precompile dependencies before copying application code
 # Run in the same command to prevent a new layer
 RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve()' && \
