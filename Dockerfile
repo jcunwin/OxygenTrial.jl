@@ -25,6 +25,9 @@ COPY --chown=julia-user:julia-user src/ ./src
 COPY --chown=julia-user:julia-user test/ ./test
 COPY --chown=julia-user:julia-user web-server.jl ./
 
+# Copy assets
+COPY --chown=julia-user:julia-user assets/ ./assets
+
 # Install dependencies only
 #RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
