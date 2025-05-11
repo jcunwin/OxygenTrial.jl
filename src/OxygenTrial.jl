@@ -24,6 +24,7 @@ get("/") do req::Request
 end
 
 get("/favicon.ico") do req::Request
+    @info "favicon.ico endpoint responding"
     return file("assets/favicon-16x16.png")
 end
 
