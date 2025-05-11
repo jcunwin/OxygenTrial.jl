@@ -38,7 +38,7 @@ include("constants.jl"); using .Constants
             @test occursin("<!DOCTYPE html>", response_body)
             @test occursin("Oxygen", response_body)
             @test occursin("Nothing to see here!", response_body)
-            @test occursin("250130.1", response_body)
+            @test occursin("250511.1", response_body)
         end
 
         # Test favicon-16x16 endpoint - should return 404
