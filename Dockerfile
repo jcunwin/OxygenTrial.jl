@@ -17,9 +17,11 @@ ENV JULIA_NUM_THREADS=4 \
 
 # Copy dependency files
 #COPY --chown=julia-user:julia-user Project-container.toml ./Project.toml
-COPY --chown=julia-user:julia-user Project.toml ./
-COPY --chown=julia-user:julia-user Manifest.toml ./
+#COPY --chown=julia-user:julia-user Project.toml ./
+#COPY --chown=julia-user:julia-user Manifest.toml ./
 
+# First, copy the project files
+COPY --chown=julia-user:julia-user Project.toml Manifest.toml ./
 # Copy application code
 COPY --chown=julia-user:julia-user src/ ./src
 COPY --chown=julia-user:julia-user test/ ./test
@@ -28,12 +30,29 @@ COPY --chown=julia-user:julia-user web-server.jl ./
 # Copy assets
 COPY --chown=julia-user:julia-user assets/ ./assets
 
+# Install and precompile dependencies before copying application code
+# Run in the same command to prevent a new layer
+RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve()' && \
+    julia --project -e 'using Pkg; Pkg.precompile()'
+
+# Run tests after all code is copied
+RUN julia --project -e 'using Pkg; Pkg.test()'
+
+# Run the whole lot!
+#RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.precompile(); Pkg.test()'
+
+# Claude: Single command for all package operations
+# Use options that, in theory, mean the options for Test() are the same as elsewhere to avoid precompilation
+#RUN julia --project --code-coverage=none --check-bounds=yes --warn-overwrite=yes --depwarn=yes \
+#         --inline=yes --startup-file=no --track-allocation=none \
+#         -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.precompile(); Pkg.test()'
+
 # Install dependencies only
 #RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
 # Now precompile and test with full application code
 #RUN julia --project -e 'using Pkg; Pkg.Registry.update(); Pkg.resolve(); Pkg.test()'
-RUN julia --project -e 'using Pkg; Pkg.precompile(); Pkg.test()'
+#RUN julia --project -e 'using Pkg; Pkg.precompile(); Pkg.test()'
 #RUN julia --project -e 'using Pkg; Pkg.resolve(); Pkg.precompile(); Pkg.test()'
 # && \
 #    julia --project -e 'using Pkg; Pkg.precompile()' && \
@@ -47,5 +66,9 @@ HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8080/health | grep -q '"status":"healthy"' || exit 1
 
 EXPOSE 8080
+
+# Claude: Add this to ensure Julia uses the existing precompilation
+# Did not work!
+#ENV JULIA_PKG_PRECOMPILE_AUTO=0
 
 ENTRYPOINT ["julia", "--project=.", "web-server.jl"]
