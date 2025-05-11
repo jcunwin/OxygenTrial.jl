@@ -18,12 +18,13 @@ get("/") do req::Request
     <h1>Oxygen</h1>
     <p>Nothing to see here!</p>
     <footer>
-        <p>250131.1</p>
+        <p>250511.1</p>
     </footer>
     """)
 end
 
 get("/favicon.ico") do req::Request
+    @info "favicon.ico endpoint responding"
     return file("assets/favicon-16x16.png")
 end
 
