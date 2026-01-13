@@ -18,7 +18,7 @@ get("/") do req::Request
     <h1>Oxygen</h1>
     <p>Nothing to see here!</p>
     <footer>
-        <p>251217.0</p>
+        <p>260114.0</p>
     </footer>
     """)
 end
