@@ -13,8 +13,7 @@ WORKDIR /home/julia-user
 
 # Set environment variables
 ENV JULIA_NUM_THREADS=4 \
-    JULIA_DEPOT_PATH=/home/julia-user/.julia \
-    PORT=5000
+    JULIA_DEPOT_PATH=/home/julia-user/.julia
 
 # Copy dependency files
 #COPY --chown=julia-user:julia-user Project-container.toml ./Project.toml
@@ -66,7 +65,7 @@ USER julia-user
 HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:5000/health | grep -q '"status":"healthy"' || exit 1
 
-EXPOSE 5000
+#EXPOSE 5000
 
 # Claude: Add this to ensure Julia uses the existing precompilation
 # Did not work!
