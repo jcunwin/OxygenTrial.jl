@@ -32,14 +32,15 @@ COPY --chown=julia-user:julia-user assets/ ./assets
 
 # Install and precompile dependencies before copying application code
 # Run in the same command to prevent a new layer
-RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve()' && \
-    julia --project -e 'using Pkg; Pkg.precompile()'
+#RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve()' && \
+#    julia --project -e 'using Pkg; Pkg.precompile()'
 
 # Run tests after all code is copied
-RUN julia --project -e 'using Pkg; Pkg.test()'
+#RUN julia --project -e 'using Pkg; Pkg.test()'
 
 # Run the whole lot!
 #RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.precompile(); Pkg.test()'
+RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.test()'
 
 # Claude: Single command for all package operations
 # Use options that, in theory, mean the options for Test() are the same as elsewhere to avoid precompilation
