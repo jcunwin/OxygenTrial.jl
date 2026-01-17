@@ -1,6 +1,10 @@
 module OxygenTrial
 
-using Oxygen ; @oxidise
+const APP_VERSION = "260117.0"
+
+export APP_VERSION
+
+using Oxygen ; @oxidize
 using Dates
 
 staticfiles("assets", "assets")
@@ -18,7 +22,7 @@ get("/") do req::Request
     <h1>Oxygen</h1>
     <p>Nothing to see here!</p>
     <footer>
-        <p>260114.1</p>
+        <p>$APP_VERSION</p>
     </footer>
     """)
 end
