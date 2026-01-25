@@ -1,6 +1,6 @@
 module OxygenTrial
 
-const APP_VERSION = "260122.0"
+const APP_VERSION = "260125.0"
 
 export APP_VERSION
 
