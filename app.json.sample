@@ -1,0 +1,8 @@
+{
+  "name": "oxygen",
+  "scripts": {
+    "dokku": {
+      "predeploy": "dokku ports:set oxygen http:80:5000"
+    }
+  }
+}
