@@ -25,6 +25,7 @@ jobs:
         version:
           - '1.11'
           # - 'lts'
+          - 'release'
           - 'pre'
         os:
           - ubuntu-latest
