@@ -1,6 +1,6 @@
 module OxygenTrial
 
-const APP_VERSION = "260125.0"
+const APP_VERSION = "260128.0"
 
 export APP_VERSION
 
@@ -23,14 +23,8 @@ function base_html(title, content)
         <title>$title</title>
         <link rel="icon" href="/assets/favicon-16x16.png" sizes="16x16">
         <link rel="icon" href="/assets/favicon-32x32.png" sizes="32x32">
-        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-        <style>
-            body { font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; line-height: 1.6; }
-            footer { margin-top: 2rem; border-top: 1px solid #ccc; padding-top: 1rem; color: #666; }
-            input { padding: 0.5rem; margin: 0.5rem 0; }
-            button { padding: 0.5rem 1rem; cursor: pointer; }
-            #result { margin-top: 1rem; padding: 1rem; background: #f4f4f4; border-radius: 4px; }
-        </style>
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/assets/styles.css">
     </head>
     <body>
         <nav>
@@ -41,6 +35,7 @@ function base_html(title, content)
         </main>
         <footer>
             <p>Version: $APP_VERSION</p>
+            <p><a href="https://htmx.org/">HTMX</a> is used.</p>
         </footer>
     </body>
     </html>
@@ -54,7 +49,7 @@ end
         """
 <h1>Oxygen</h1>
 <p>Welcome to OxygenTrial!</p>
-<p>HTMX is now enabled.</p>
+<p>Not much to see here.</p>
 """
     )
 end
@@ -64,43 +59,83 @@ end
         "Add Numbers",
         """
 <h1>Add Numbers</h1>
-<form hx-post="/calculate" hx-target="#result" hx-indicator="#loading">
-    <div>
-        <label>Number X:</label><br>
-        <input type="number" name="x" value="0" required>
-    </div>
-    <div>
-        <label>Number Y:</label><br>
-        <input type="number" name="y" value="0" required>
-    </div>
-    <button type="submit">Calculate Sum</button>
-    <span id="loading" class="htmx-indicator">Calculating...</span>
-</form>
-<div id="result">
-    Result will appear here.
-</div>
+<p>
+    <form hx-post="/sum" hx-target="#result">
+        <div hx-target="this" hx-swap="outerHTML">
+            <label >First number:</label><br>
+            <input type="text" id="firstnumber" name="firstnumber" hx-post="/validatefirstnumber" hx-indicator="#ind">
+            <img id="ind" src="/assets/bars.svg" class="htmx-indicator"/>
+        </div>
+        <div hx-target="this" hx-swap="outerHTML">
+            <label >Second number:</label><br>
+            <input type="text" id="secondnumber" name="secondnumber" hx-post="/validatesecondnumber" hx-indicator="#ind">
+            <img id="ind" src="/assets/bars.svg" class="htmx-indicator"/>
+        </div>
+        <button class="btn btn-primary">Sum</button>
+    </form>
+</p>
+<p>
+Result: <div id="result" class="result"></div>
+</p>
+
 """
     )
 end
 
-@post "/calculate" function (req::Request)
+@post "/sum" function (req::Request)
     params = formdata(req)
     @info "Calculate POST received" params
-    x = parse(Int, params["x"])
-    y = parse(Int, params["y"])
-    res = add(x, y)
-    return html("<p><strong>$x + $y = $res</strong></p>")
+    if !isvalidnumber(params["firstnumber"]) || !isvalidnumber(params["secondnumber"])
+        return "There was a problem with one or more of your numbers."
+    end
+    res = add(parse(Int, params["firstnumber"]), parse(Int, params["secondnumber"]))
+    return html("<p><strong>$(params["firstnumber"]) + $(params["secondnumber"]) = $res</strong></p>")
 end
+
+#TODO: Add validation like here: https://htmx.org/examples/inline-validation/
+@post "/validatefirstnumber" function (request)
+    validatenumber(request, "firstnumber", "First Number")
+end
+
+@post "/validatesecondnumber" function (request)
+    validatenumber(request, "secondnumber", "Second Number")
+end
+
 
 function isvalidnumber(number)
     try
-        parsedvalue = parse(Int64, number)
+        parsedvalue = parse(Float64, number)
         println("Parsed ok: $parsedvalue")
         return true
     catch e
         println("Exception: $e")
         return false
     end
+end
+
+function validatenumber(request, number, label)
+    println("Validating $number")
+    data = formdata(request)
+    println(data)
+    rawdata = data[number]
+    errormsg = ""
+    class = ""
+    if isvalidnumber(rawdata)
+        class = "valid"
+    else
+        errormsg = """
+        <div class='error-message'>That is not a number.  Please enter a valid number.</div>
+        """
+        class = "error"
+    end
+    return html("""
+    <div hx-target="this" hx-swap="outerHTML" class="$class">
+        <label>$label</label><br>
+        <input name="$number" id="$number" hx-post="/validate$number" hx-indicator="#ind" value="$rawdata">
+        <img id="ind" src="/assets/bars.svg" class="htmx-indicator"/>
+        $errormsg
+    </div>
+    """)
 end
 
 @get "/favicon.ico" function (req::Request)
