@@ -3,7 +3,8 @@ using Test
 using Aqua
 using HTTP
 
-include("constants.jl"); using .Constants
+include("constants.jl");
+using .Constants;
 
 @testset "OxygenTrial.jl" begin
     @testset "Add function tests" begin
@@ -26,8 +27,8 @@ include("constants.jl"); using .Constants
         @test isapprox(OxygenTrial.add(-1.0, 1), 0.0)
     end
 
- 
-    OxygenTrial.serve(port=PORT, host=HOST, async=true,  show_errors=false, show_banner=false, access_log=nothing)
+
+    OxygenTrial.serve(port=PORT, host=HOST, async=true, show_errors=false, show_banner=false, access_log=nothing)
 
     @testset "GET endpoint tests" begin
         # Test root endpoint
@@ -37,7 +38,7 @@ include("constants.jl"); using .Constants
             response_body = String(response.body)
             @test occursin("<!DOCTYPE html>", response_body)
             @test occursin("Oxygen", response_body)
-            @test occursin("Nothing to see here!", response_body)
+            @test occursin("Not much to see here.", response_body)
             @test occursin("$APP_VERSION", response_body)
         end
 
@@ -60,7 +61,7 @@ include("constants.jl"); using .Constants
             response = HTTP.request("GET", "$localhost/assets/favicon-16x16.png")
             @test response.status == 200
             @test any(x -> x.first == "Content-Type" && x.second == "image/png", response.headers)
-       end
+        end
 
         # Test favicon-32x32 endpoint - should return 404
         @testset "favicon-32x32 endpoint" begin
@@ -121,7 +122,7 @@ include("constants.jl"); using .Constants
 
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(
-            OxygenTrial; 
+            OxygenTrial;
             stale_deps=(; ignore=[:Revise])
         )
     end
