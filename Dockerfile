@@ -1,4 +1,4 @@
-FROM julia:1.11.2-bookworm
+FROM julia:1.12-bookworm
 # FROM julia:1.11.2-bullseye
 
 # Add metadata
@@ -21,7 +21,8 @@ ENV JULIA_NUM_THREADS=4 \
 #COPY --chown=julia-user:julia-user Manifest.toml ./
 
 # First, copy the project files
-COPY --chown=julia-user:julia-user Project.toml Manifest.toml ./
+#COPY --chown=julia-user:julia-user Project.toml Manifest.toml ./
+COPY --chown=julia-user:julia-user Project.toml ./
 # Copy application code
 COPY --chown=julia-user:julia-user src/ ./src
 COPY --chown=julia-user:julia-user test/ ./test
