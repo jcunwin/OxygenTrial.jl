@@ -1,3 +1,13 @@
+using DotEnv
+
+# Load .env file if it exists (for development)
+if isfile(".env")
+    DotEnv.config()
+    @info "Loaded environment variables from .env file"
+else
+    @info "No .env file found, using existing environment variables"
+end
+
 using Oxygen
 using OxygenTrial
 

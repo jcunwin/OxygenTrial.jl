@@ -1,22 +1,30 @@
 name = "OxygenTrial"
 uuid = "5124a3bb-fc65-490b-b96a-7f01b8eecbce"
-authors = ["John Unwin <john@fingertip.co.nz> and contributors"]
 version = "1.0.0-DEV"
+authors = ["John Unwin <john@fingertip.co.nz> and contributors"]
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DotEnv = "4dc1fcf4-5e3b-5448-94ab-0c38ec0385c1"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 Oxygen = "df9a0d86-3283-4920-82dc-4555fc0d1d8b"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+URIs = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
 
 [compat]
 Aqua = "0.8"
 Dates = "1.11.0"
+DotEnv = "1.0.0"
 HTTP = "1.10"
+JSON3 = "1.14"
 Oxygen = "1.7"
+Random = "1.11"
 Revise = "3.7"
 Test = "1"
+URIs = "1.6"
 julia = "1.12"
 
 [extras]

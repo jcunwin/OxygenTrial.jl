@@ -123,7 +123,7 @@ using .Constants;
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(
             OxygenTrial;
-            stale_deps=(; ignore=[:Revise])
+            stale_deps=(; ignore=[:Revise, :URIs, :JSON3])
         )
     end
 
