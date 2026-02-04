@@ -1,12 +1,15 @@
 module OxygenTrial
 
-const APP_VERSION = "260128.0"
+const APP_VERSION = "260205.0"
 
 export APP_VERSION
 
 using Oxygen
 @oxidize
 using Dates
+using OpenIDConnect
+using JSON3
+using HTTP
 
 staticfiles("assets", "assets")
 
